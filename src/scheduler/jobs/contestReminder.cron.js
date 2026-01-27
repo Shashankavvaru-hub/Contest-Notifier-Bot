@@ -18,7 +18,7 @@ export function startContestReminderCron() {
       const contests = await Contest.find({
         reminderSent: false,
         startTime: {
-          $gt: now,
+          $gt: now,   
           $lte: oneHourLater,
         },
       });
@@ -26,11 +26,11 @@ export function startContestReminderCron() {
       for (const contest of contests) {
         const emoji = PLATFORM_EMOJI[contest.platform] || "🏆";
         const message = `
-            ⏰ <b>Contest Reminder</b>
-            ${emoji} <b>${contest.platform.toUpperCase()}</b>
-            📌 <b>${contest.name}</b>
-            🚀 Starts in <b>1 hour</b>
-            🔗 ${contest.contestLink}
+⏰ <b>Contest Reminder</b>
+${emoji} <b>${contest.platform.toUpperCase()}</b>
+<b>${contest.name}</b>
+Starts in <b>1 hour</b>
+<b>URL: </b>${contest.contestLink}
             `;
         await sendTelegramMessage(message);
 

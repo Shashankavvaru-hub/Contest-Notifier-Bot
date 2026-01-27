@@ -23,9 +23,9 @@ export async function processContests(contests) {
 
       const message = `
 ${emoji} <b>${res.platform.toUpperCase()} Contest Announced</b>
-📌 <b>${res.name}</b>
-⏰ Starts: ${new Date(res.startTime).toLocaleString("en-IN")}
-${res.durationMinutes ? `⏳ Duration: ${res.durationMinutes} mins` : ""}
+<b>${res.name}</b>
+Starts: ${new Date(res.startTime).toLocaleString("en-IN")}
+${res.durationMinutes ? `Duration: ${res.durationMinutes} mins` : ""}
       `;
 
       await sendTelegramMessage(message);
@@ -43,6 +43,5 @@ ${res.durationMinutes ? `⏳ Duration: ${res.durationMinutes} mins` : ""}
     }
   }
 
-  console.log(`✅ New contests added: ${insertedCount}`);
   return insertedCount;
 }
