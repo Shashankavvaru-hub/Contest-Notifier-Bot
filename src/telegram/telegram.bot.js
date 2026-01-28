@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-
+console.log("RUNNING BOT TOKEN PREFIX:", process.env.BOT_TOKEN.slice(0, 10));
 const bot = new TelegramBot(process.env.BOT_TOKEN, {
   polling: true,
 });
