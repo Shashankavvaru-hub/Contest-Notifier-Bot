@@ -23,6 +23,7 @@ export async function processContests(contests) {
 
       const message = `
 ${emoji} <b>${res.platform.toUpperCase()} Contest Announced</b>
+
 <b>${res.name}</b>
 Starts: ${new Date(res.startTime).toLocaleString("en-IN")}
 ${res.durationMinutes ? `Duration: ${res.durationMinutes} mins` : ""}

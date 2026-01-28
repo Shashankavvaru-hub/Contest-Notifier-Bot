@@ -8,12 +8,12 @@ bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
 
   const message = `
-👋 <b>Welcome to Contest Notifier Bot!</b>
+<b>Welcome to Contest Notifier Bot!</b>
 
 I send alerts for upcoming coding contests on:
-🟦 Codeforces • 🟩 LeetCode • 🟧 CodeChef
+• Codeforces  • LeetCode  • CodeChef
 
-👉 Join the channel to receive all contest alerts.
+Join the channel to receive all contest alerts.
   `;
 
   bot.sendMessage(chatId, message, {
