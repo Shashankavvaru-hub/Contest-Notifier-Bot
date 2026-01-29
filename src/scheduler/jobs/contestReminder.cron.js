@@ -27,28 +27,26 @@ function formatRemainingTime(ms) {
 
 export function startContestReminderCron() {
   // Runs every 5 minutes
-  cron.schedule(
-    "*/5 * * * *",
-    async () => {
-      const now = new Date();
-      const from = new Date(now.getTime() + 55 * 60 * 1000);
-      const to = new Date(now.getTime() + 65 * 60 * 1000);
+  cron.schedule("*/5 * * * *", async () => {
+    const now = new Date();
+    const from = new Date(now.getTime() + 55 * 60 * 1000);
+    const to = new Date(now.getTime() + 65 * 60 * 1000);
 
-      try {
-        const contests = await Contest.find({
-          notified: true,
-          reminderSent: false,
-          startTime: {
-            $gte: from,
-            $lte: to,
-          },
-        });
+    try {
+      const contests = await Contest.find({
+        notified: true,
+        reminderSent: false,
+        startTime: {
+          $gte: from,
+          $lte: to,
+        },
+      });
 
-        for (const contest of contests) {
-          const emoji = PLATFORM_EMOJI[contest.platform] || "🏆";
-          const remainingMs = contest.startTime.getTime() - Date.now();
-          const remainingText = formatRemainingTime(remainingMs);
-          const message = `
+      for (const contest of contests) {
+        const emoji = PLATFORM_EMOJI[contest.platform] || "🏆";
+        const remainingMs = contest.startTime.getTime() - Date.now();
+        const remainingText = formatRemainingTime(remainingMs);
+        const message = `
 ⏰ <b>Contest Reminder</b>
 
 ${emoji} <b>${contest.platform.toUpperCase()}</b>
@@ -58,17 +56,13 @@ Starts in <b>${remainingText}</b>
 
 <b>URL: </b>${contest.contestLink}
             `;
-          await sendTelegramMessage(message);
+        await sendTelegramMessage(message);
 
-          contest.reminderSent = true;
-          await contest.save();
-        }
-      } catch (error) {
-        console.error("Contest reminder cron failed:", error.message);
+        contest.reminderSent = true;
+        await contest.save();
       }
-    },
-    {
-      timezone: "Asia/Kolkata",
-    },
-  );
+    } catch (error) {
+      console.error("Contest reminder cron failed:", error.message);
+    }
+  });
 }

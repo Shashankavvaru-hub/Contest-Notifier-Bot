@@ -6,31 +6,25 @@ import { fetchLeetCodeContests } from "../../contests/sources/leetcode/leetcode.
 
 export function startContestFetcherCron() {
   // Runs every 3 hours
-  cron.schedule(
-    "0 */3 * * *",
-    async () => {
-      try {
-        const contests = [
-          ...(await fetchCodeChefContests()),
-          ...(await fetchCodeforcesContests()),
-          ...(await fetchLeetCodeContests()),
-        ];
-        if (!contests.length) {
-          console.log("No contests fetched");
-          return;
-        }
-
-        const insertedCount = await processContests(contests);
-
-        console.log(
-          `Contest fetcher finished. New contests added: ${insertedCount}`,
-        );
-      } catch (error) {
-        console.error("Contest fetcher cron failed:", error.message);
+  cron.schedule("0 */3 * * *", async () => {
+    try {
+      const contests = [
+        ...(await fetchCodeChefContests()),
+        ...(await fetchCodeforcesContests()),
+        ...(await fetchLeetCodeContests()),
+      ];
+      if (!contests.length) {
+        console.log("No contests fetched");
+        return;
       }
-    },
-    {
-      timezone: "Asia/Kolkata",
-    },
-  );
+
+      const insertedCount = await processContests(contests);
+
+      console.log(
+        `Contest fetcher finished. New contests added: ${insertedCount}`,
+      );
+    } catch (error) {
+      console.error("Contest fetcher cron failed:", error.message);
+    }
+  });
 }
