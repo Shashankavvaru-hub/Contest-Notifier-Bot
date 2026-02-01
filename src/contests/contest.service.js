@@ -30,6 +30,10 @@ ${res.durationMinutes ? `Duration: ${res.durationMinutes} mins` : ""}
       `;
 
       await sendTelegramMessage(message);
+
+      document.notified = true;
+      await document.save();
+      
     } catch (error) {
       // Duplicate contest (already exists)
       if (error.code === 11000) {
