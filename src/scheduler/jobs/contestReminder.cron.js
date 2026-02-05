@@ -29,24 +29,23 @@ export function startContestReminderCron() {
   // Runs every 5 minutes
   cron.schedule("*/5 * * * *", async () => {
     const now = new Date();
-    const from = new Date(now.getTime() + 55 * 60 * 1000);
-    const to = new Date(now.getTime() + 65 * 60 * 1000);
 
     try {
       const contests = await Contest.find({
         notified: true,
         reminderSent: false,
-        startTime: {
-          $gte: from,
-          $lte: to,
-        },
+        startTime: { $gt: now },
       });
 
       for (const contest of contests) {
-        const emoji = PLATFORM_EMOJI[contest.platform] || "🏆";
-        const remainingMs = contest.startTime.getTime() - Date.now();
-        const remainingText = formatRemainingTime(remainingMs);
-        const message = `
+        const diffMs = contest.startTime.getTime() - now.getTime();
+
+        // Send reminder once contest is within 1 hour
+        if (diffMs <= 60 * 60 * 1000 && diffMs > 0) {
+          const emoji = PLATFORM_EMOJI[contest.platform] || "🏆";
+          const remainingText = formatRemainingTime(diffMs);
+
+          const message = `
 ⏰ <b>Contest Reminder</b>
 
 ${emoji} <b>${contest.platform.toUpperCase()}</b>
@@ -54,12 +53,17 @@ ${emoji} <b>${contest.platform.toUpperCase()}</b>
 <b>${contest.name}</b>
 Starts in <b>${remainingText}</b>
 
-<b>URL: </b>${contest.contestLink}
-            `;
-        await sendTelegramMessage(message);
+<b>URL:</b> ${contest.contestLink}
+          `;
 
-        contest.reminderSent = true;
-        await contest.save();
+          await sendTelegramMessage(message);
+
+          // Atomic update to avoid duplicate reminders
+          await Contest.updateOne(
+            { _id: contest._id, reminderSent: false },
+            { $set: { reminderSent: true } },
+          );
+        }
       }
     } catch (error) {
       console.error("Contest reminder cron failed:", error.message);
