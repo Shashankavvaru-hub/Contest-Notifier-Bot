@@ -17,8 +17,8 @@ export async function fetchCodeChefContests() {
 
     return data.future_contests
       .map((c) => {
-        const startTime = new Date(c.contest_start_date);
-        const endTime = new Date(c.contest_end_date);
+        const startTime = new Date(c.contest_start_date_iso);
+        const endTime = new Date(c.contest_end_date_iso);
 
         if (isNaN(startTime) || isNaN(endTime)) return null;
 
